@@ -897,8 +897,8 @@ shareBtn.id = 'gw-share-btn';
 shareBtn.textContent = 'Share';
 shareBtn.className = 'sec-btn';
 shareBtn.onclick = () => {
-  const url = encodeURIComponent('https://fb.gg/play/4188997278009590');
-  const quote = encodeURIComponent("I'm playing GRIDWORD by CAR-NOVA.i!");
+  const url = encodeURIComponent('https://www.carson-designs.com/gridword');
+  const quote = encodeURIComponent("See if you can beat todays 5x5 GRIDWORD by CAR-NOVA.i!");
   const shareUrl = `https://www.facebook.com/sharer/sharer.php?u=${url}&quote=${quote}`;
   window.open(shareUrl, '_blank', 'noopener');
 };
@@ -1829,3 +1829,4 @@ function hideLoader() {
     ▸ And joined CAR-NOVA.i in the void.
   ──────────────────────────────────────────────────────────────
 */
+
