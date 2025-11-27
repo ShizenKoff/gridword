@@ -150,7 +150,7 @@
  */
 
  // ------------------------Share code------------------------
- // const GW_SHARE_URL = 'https://YOUR-GRIDWORD-URL-HERE'; // <-- set this to your live game URL
+  const GW_SHARE_URL = 'https://YOUR-GRIDWORD-URL-HERE'; // <-- set this to your live game URL
 
 
 const GW_VERSION = '1.2.0';
@@ -891,27 +891,17 @@ dailyBtn.onclick = () => {
   renderPuzzle(dp, gwState.currentDifficulty);
 };
 
-const SHARE_URL  = "https://www.carson-designs.com/gridword";  // <- put your real Wix GridWord URL here
-const SHARE_TEXT = "Try today’s GRIDWORD puzzle from CAR-NOVA.i – a daily 5×5 word challenge.";
-
-// Share button handler
-shareBtn.addEventListener("click", () => {
-  // Modern mobile/desktop share if available
-  if (navigator.share) {
-    navigator.share({
-      title: "GRIDWORD – CAR-NOVA.i",
-      text: SHARE_TEXT,
-      url: SHARE_URL
-    }).catch(err => {
-      console.log("navigator.share failed:", err);
-    });
-  } else {
-    // Fallback to classic Facebook share dialog in a new tab
-    const fbUrl = "https://www.facebook.com/sharer/sharer.php?u=" + encodeURIComponent(SHARE_URL);
-    window.open(fbUrl, "_blank", "noopener,noreferrer");
-  }
-});
-
+// SHARE BTN
+const shareBtn = document.createElement('button');
+shareBtn.id = 'gw-share-btn';
+shareBtn.textContent = 'Share';
+shareBtn.className = 'sec-btn';
+shareBtn.onclick = () => {
+  const url = encodeURIComponent('https://carson-designs.com/gridword');
+  const quote = encodeURIComponent("I'm playing GRIDWORD by CAR-NOVA.i!");
+  const shareUrl = `https://www.facebook.com/sharer/sharer.php?u=${url}&quote=${quote}`;
+  window.open(shareUrl, '_blank', 'noopener');
+};
 
 
 // Append buttons (shareBtn MUST exist here)
