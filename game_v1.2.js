@@ -202,6 +202,11 @@ let currentInputs = null;        // 2D array of <input|null>
 let PUZZLES = [];            // loaded puzzle bank
 let shareBtn = null;
 
+let bgm;   // reference to <audio id="bgm">
+let bgmStarted = false;
+let bgmMuted = false;
+
+
 
 // ============================================================
 // #region GLOBAL STATE
@@ -316,6 +321,8 @@ function cacheDom() {
 
   gwDom.loader = document.getElementById('gw-loader'); 
   shareBtn = document.getElementById('gw-share-btn');
+  bgm = document.getElementById("bgm");
+
   // <-- NEW
 }
 
@@ -323,6 +330,27 @@ function cacheDom() {
 // <<< [NOVA-SECTION: DOM REFERENCES – END]
 // #endregion
 // ============================================================
+
+
+function unlockBGM() {
+  if (bgmStarted || !gwDom.bgm) return;
+  bgmStarted = true;
+
+  if (!bgmMuted) {
+    gwDom.bgm.play().catch(err => {
+      console.log("BGM unlock blocked:", err);
+    });
+  }
+}
+
+// Unlock audio after the first interaction *inside the game iframe*
+window.addEventListener("pointerdown", unlockBGM, { once: true });
+window.addEventListener("keydown", unlockBGM, { once: true });
+
+
+
+
+
 
 
 
@@ -1383,6 +1411,7 @@ function revealOneCell() {
 
 function toggleAudioMute() {
   gwState.audioEnabled = !gwState.audioEnabled;
+
   try {
     localStorage.setItem(
       GW_CONFIG.storageKeys.audioEnabled,
@@ -1390,10 +1419,20 @@ function toggleAudioMute() {
     );
   } catch (e) {}
 
+  // Set our own mute flag
+  bgmMuted = !gwState.audioEnabled;
+
   updateAudioUi();
 
   if (gwDom.bgm) {
-    gwDom.bgm.muted = !gwState.audioEnabled;
+    if (bgmMuted) {
+      gwDom.bgm.pause();
+    } else {
+      // If audio already started, resume it
+      if (bgmStarted) {
+        gwDom.bgm.play().catch(err => console.log("Resume blocked:", err));
+      }
+    }
   }
 }
 
@@ -1401,6 +1440,27 @@ function updateAudioUi() {
   if (!gwDom.btnMute) return;
   gwDom.btnMute.textContent = gwState.audioEnabled ? '🔊' : '🔇';
 }
+
+
+
+function unlockBGM() {
+  if (bgmStarted) return;
+  bgmStarted = true;
+
+  if (!bgmMuted) {
+    bgm.play().catch(err => {
+      console.log("BGM play blocked:", err);
+    });
+  }
+
+  window.removeEventListener("pointerdown", unlockBGM);
+  window.removeEventListener("keydown", unlockBGM);
+}
+
+// Start music after first interaction
+window.addEventListener("pointerdown", unlockBGM, { once: true });
+window.addEventListener("keydown", unlockBGM, { once: true });
+
 
 // Placeholder FX hooks if we want micro-animations later
 function playSfxInput() { /* no-op for now */ }
