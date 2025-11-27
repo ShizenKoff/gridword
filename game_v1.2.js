@@ -200,6 +200,7 @@ let currentSolutionGrid = null;  // 2D array of solution letters / '-'
 let currentInputs = null;        // 2D array of <input|null>
 
 let PUZZLES = [];            // loaded puzzle bank
+let shareBtn = null;
 
 
 // ============================================================
@@ -313,7 +314,9 @@ function cacheDom() {
   gwDom.modals.howto    = document.getElementById('gw-howto');
   gwDom.modals.backdrop = document.getElementById('gw-backdrop');
 
-  gwDom.loader = document.getElementById('gw-loader');   // <-- NEW
+  gwDom.loader = document.getElementById('gw-loader'); 
+  shareBtn = document.getElementById('gw-share-btn');
+  // <-- NEW
 }
 
 
@@ -891,17 +894,38 @@ dailyBtn.onclick = () => {
   renderPuzzle(dp, gwState.currentDifficulty);
 };
 
-// SHARE BTN
-const shareBtn = document.createElement('button');
-shareBtn.id = 'gw-share-btn';
-shareBtn.textContent = 'Share';
-shareBtn.className = 'sec-btn';
-shareBtn.onclick = () => {
-  const url = encodeURIComponent('https://carson-designs.com/gridword');
-  const quote = encodeURIComponent("I'm playing GRIDWORD by CAR-NOVA.i!");
-  const shareUrl = `https://www.facebook.com/sharer/sharer.php?u=${url}&quote=${quote}`;
-  window.open(shareUrl, '_blank', 'noopener');
-};
+// ---------------------------------------------------------
+// SHARE BUTTON  (modern + safe + globally compatible)
+// ---------------------------------------------------------
+
+// Create button once per puzzle render
+const shareBtn = document.createElement("button");
+shareBtn.id = "gw-share-btn";
+shareBtn.textContent = "Share";
+shareBtn.className = "sec-btn";
+
+shareBtn.addEventListener("click", () => {
+  const SHARE_URL  = "https://www.carson-designs.com/gridword";
+  const SHARE_TEXT = "Try today’s GRIDWORD puzzle from CAR-NOVA.i – a daily 5×5 challenge.";
+
+  // Modern Web Share API (mobile + desktop)
+  if (navigator.share) {
+    navigator.share({
+      title: "GRIDWORD – CAR-NOVA.i",
+      text: SHARE_TEXT,
+      url: SHARE_URL,
+    }).catch((err) => {
+      console.log("navigator.share failed:", err);
+    });
+  } else {
+    // Facebook fallback
+    const url = encodeURIComponent(SHARE_URL);
+    const quote = encodeURIComponent(SHARE_TEXT);
+    const fbUrl = `https://www.facebook.com/sharer/sharer.php?u=${url}&quote=${quote}`;
+    window.open(fbUrl, "_blank", "noopener,noreferrer");
+  }
+});
+
 
 
 // Append buttons (shareBtn MUST exist here)
