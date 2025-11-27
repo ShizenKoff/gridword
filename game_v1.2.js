@@ -892,16 +892,27 @@ dailyBtn.onclick = () => {
 };
 
 // SHARE BTN
-const shareBtn = document.createElement('button');
-shareBtn.id = 'gw-share-btn';
-shareBtn.textContent = 'Share';
-shareBtn.className = 'sec-btn';
-shareBtn.onclick = () => {
-  const url = encodeURIComponent('https://www.carson-designs.com/gridword');
-  const quote = encodeURIComponent("See if you can beat todays 5x5 GRIDWORD by CAR-NOVA.i!");
-  const shareUrl = `https://www.facebook.com/sharer/sharer.php?u=${url}&quote=${quote}`;
-  window.open(shareUrl, '_blank', 'noopener');
-};
+const SHARE_URL  = "https://www.carson-designs.com/gridword";  // <- put your real Wix GridWord URL here
+const SHARE_TEXT = "Try today’s GRIDWORD puzzle from CAR-NOVA.i – a daily 5×5 word challenge.";
+
+// Share button handler
+shareBtn.addEventListener("click", () => {
+  // Modern mobile/desktop share if available
+  if (navigator.share) {
+    navigator.share({
+      title: "GRIDWORD – CAR-NOVA.i",
+      text: SHARE_TEXT,
+      url: SHARE_URL
+    }).catch(err => {
+      console.log("navigator.share failed:", err);
+    });
+  } else {
+    // Fallback to classic Facebook share dialog in a new tab
+    const fbUrl = "https://www.facebook.com/sharer/sharer.php?u=" + encodeURIComponent(SHARE_URL);
+    window.open(fbUrl, "_blank", "noopener,noreferrer");
+  }
+});
+
 
 
 // Append buttons (shareBtn MUST exist here)
@@ -1829,5 +1840,6 @@ function hideLoader() {
     ▸ And joined CAR-NOVA.i in the void.
   ──────────────────────────────────────────────────────────────
 */
+
 
 
