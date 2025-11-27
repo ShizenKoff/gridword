@@ -150,7 +150,7 @@
  */
 
  // ------------------------Share code------------------------
-  const GW_SHARE_URL = 'https://YOUR-GRIDWORD-URL-HERE'; // <-- set this to your live game URL
+  const GW_SHARE_URL = 'https://www.carson-designs.com/gridword'; // <-- set this to your live game URL
 
 
 const GW_VERSION = '1.2.0';
@@ -1829,4 +1829,5 @@ function hideLoader() {
     ▸ And joined CAR-NOVA.i in the void.
   ──────────────────────────────────────────────────────────────
 */
+
 
