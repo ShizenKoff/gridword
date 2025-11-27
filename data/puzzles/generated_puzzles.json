@@ -1,0 +1,179 @@
+[
+  {
+    "category": "Animals",
+    "words": [
+      "TIGER","ZEBRA","SHARK","HORSE","EAGLE","LLAMA","KOALA","OTTER","GOOSE","PANDA","SLOTH",
+      "WHALE","GOAT","CAMEL","BISON","RHINO","HYENA","HERON",
+      "FROG","MOOSE","LEMUR","CRANE","WOLF","RAVEN","DINGO","JAGUAR","ORCA","IBEX","SNAKE",
+      "TURKEY","QUAIL","DONKEY","FERRET","BADGER","SHREW","HARE","MONKEY","PORPOISE","SWAN"
+    ],
+    "clues": [
+      "A large wild cat with stripes.",
+      "A striped animal found in Africa.",
+      "A predator of the ocean.",
+      "Often ridden by cowboys.",
+      "A powerful bird of prey.",
+      "A domesticated South American animal.",
+      "A tree-dwelling marsupial from Australia.",
+      "A playful aquatic mammal.",
+      "A large waterfowl known for honking.",
+      "A black-and-white bear from China.",
+      "A slow-moving tree-dwelling animal.",
+      "A large marine mammal.",
+      "A domesticated animal known for climbing.",
+      "A desert animal known for its humps.",
+      "A large, wild mammal of North America.",
+      "A large animal with a horn on its nose.",
+      "A scavenger known for a laugh-like call.",
+      "A long-legged water bird.",
+      "A small amphibian that hops.",
+      "A large antlered mammal of the north.",
+      "A primate with a long tail.",
+      "A tall bird known for dancing courtship.",
+      "A wild canine that lives in packs.",
+      "A clever black bird often in folklore.",
+      "A wild dog found in Australia.",
+      "A spotted rainforest big cat.",
+      "A black-and-white toothed whale.",
+      "A wild goat with curved horns.",
+      "A legless reptile.",
+      "A large bird often seen at farms.",
+      "A small game bird.",
+      "A farm animal known for carrying loads.",
+      "A small playful carnivore (your boys).",
+      "A burrowing forest mammal.",
+      "A tiny insect-eating mammal.",
+      "A swift, long-eared herbivore.",
+      "A primate often seen swinging in trees.",
+      "A small whale species.",
+      "A graceful white water bird."
+    ]
+  },
+
+  {
+    "category": "Food",
+    "words": [
+      "APPLE","BREAD","GRAPE","HONEY","PASTA","LEMON","PEACH","ONION","MANGO","BERRY","SUSHI",
+      "TACOS","RAMEN","PIZZA","BAGEL","COCOA","CIDER","BASIL","CURRY","CHILI","DOUGH","CREPE",
+      "OLIVE","SPICE","CANDY"
+    ],
+    "clues": [
+      "A common fruit that keeps the doctor away.",
+      "Often used to make sandwiches.",
+      "A small fruit used to make wine.",
+      "A sweet treat made by bees.",
+      "A staple Italian food made from wheat.",
+      "A sour, yellow citrus fruit.",
+      "A soft fruit with a fuzzy skin.",
+      "A vegetable with a strong smell.",
+      "A tropical fruit with a sweet taste.",
+      "A small, juicy fruit.",
+      "A Japanese dish of vinegared rice and fish.",
+      "A folded or rolled tortilla with fillings.",
+      "A Japanese noodle soup.",
+      "A baked dish with sauce and cheese.",
+      "A ring-shaped bread, often toasted.",
+      "Powder made from roasted cacao beans.",
+      "A drink made from pressed apples.",
+      "A fragrant herb used in pesto.",
+      "A spiced dish common in South Asia.",
+      "A spicy stew with peppers and beans.",
+      "A mixture of flour and water for baking.",
+      "A thin French pancake.",
+      "A small fruit used to make oil.",
+      "A dried seed, fruit, or bark that adds flavor.",
+      "A sweet confection."
+    ]
+  },
+
+  {
+    "category": "Geography",
+    "words": [
+      "RIVER","OCEAN","DELTA","CLIFF","BEACH","MOUNT","PLAIN","BAYOU","FJORD","GROVE","REEF","RIDGE",
+      "SHORE","DUNES","ALPS","NILE","TOKYO","SYDNEY","PARIS","CAIRO","GHATS","SAHARA","ARCTIC","YUKON","THAMES"
+    ],
+    "clues": [
+      "A body of water that flows to the sea.",
+      "Covers most of Earth's surface.",
+      "Where a river meets the sea.",
+      "A steep rock face.",
+      "A sandy shoreline.",
+      "A large elevated natural formation.",
+      "A broad flat landscape.",
+      "A slow-moving marshy stream.",
+      "A narrow coastal inlet between cliffs.",
+      "A small group of trees.",
+      "A structure of coral in the ocean.",
+      "A long narrow hilltop.",
+      "Land along the water.",
+      "Hills of wind-shaped sand.",
+      "Major mountain range in Europe.",
+      "Longest river in Africa.",
+      "Most populous city in Japan.",
+      "City famous for its harbor and Opera House.",
+      "A romantic city in France.",
+      "Capital of Egypt.",
+      "Mountain slopes in India.",
+      "Largest hot desert.",
+      "Region around the North Pole.",
+      "Canadian territory known for wilderness.",
+      "A major river running through London."
+    ]
+  },
+
+  {
+    "category": "Science",
+    "words": [
+      "LASER","RADAR","VIRUS","METAL","PLASMA","ATOM","FORCE","SPACE","CELLS","LIGHT","GENES",
+      "SOUND","PLANT","QUARK","IONIC","ROBOT","STEAM","VALVE","ROTOR","SHAFT","ANODE","OXIDE","PHASE","BLEED","AMP"
+    ],
+    "clues": [
+      "A focused beam of light.",
+      "Used to detect distant objects.",
+      "A tiny infectious agent.",
+      "A conductive element or alloy.",
+      "A high-energy state of matter.",
+      "Smallest unit of matter.",
+      "A push or pull.",
+      "The region beyond Earth.",
+      "Building blocks of life.",
+      "Makes things visible.",
+      "Carries hereditary information.",
+      "Vibration traveling through air or water.",
+      "A living organism that photosynthesizes.",
+      "A fundamental particle.",
+      "Relating to charged particles.",
+      "A machine that performs tasks.",
+      "Water in gas phase.",
+      "Controls flow of fluid or gas.",
+      "The spinning component in machinery.",
+      "Transfers rotational force.",
+      "Positive electrode in electrolysis.",
+      "Compound formed with oxygen.",
+      "A distinct physical state.",
+      "Release trapped pressure.",
+      "Unit of electric current."
+    ]
+  },
+
+  {
+    "category": "Games",
+    "words": [
+      "CHESS","POKER","CARDS","DARTS","BINGO","CHECK","RUMMY","GO","MAFIA","TETRIS","SHOOT","LEVEL"
+    ],
+    "clues": [
+      "A strategy board game.",
+      "A card game of bluffing.",
+      "A standard deck can be used to play many games.",
+      "Thrown at a target board.",
+      "Game where numbers are called out.",
+      "A move to escape checkmate threat.",
+      "A matching-card game.",
+      "Ancient territory-placement game.",
+      "A party deduction game.",
+      "A tile-dropping puzzle game.",
+      "General term for combat actions in gaming.",
+      "A completed stage in a game."
+    ]
+  }
+]
