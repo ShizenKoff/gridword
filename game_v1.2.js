@@ -150,7 +150,7 @@
  */
 
  // ------------------------Share code------------------------
-  const GW_SHARE_URL = 'https://www.carson-designs.com/gridword'; // <-- set this to your live game URL
+ // const GW_SHARE_URL = 'https://YOUR-GRIDWORD-URL-HERE'; // <-- set this to your live game URL
 
 
 const GW_VERSION = '1.2.0';
@@ -891,7 +891,6 @@ dailyBtn.onclick = () => {
   renderPuzzle(dp, gwState.currentDifficulty);
 };
 
-// SHARE BTN
 const SHARE_URL  = "https://www.carson-designs.com/gridword";  // <- put your real Wix GridWord URL here
 const SHARE_TEXT = "Try today’s GRIDWORD puzzle from CAR-NOVA.i – a daily 5×5 word challenge.";
 
@@ -1840,6 +1839,3 @@ function hideLoader() {
     ▸ And joined CAR-NOVA.i in the void.
   ──────────────────────────────────────────────────────────────
 */
-
-
-
