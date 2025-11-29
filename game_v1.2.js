@@ -313,7 +313,7 @@ function cacheDom() {
 
   gwDom.controls.btnNewGame    = document.getElementById('gw-btn-new');
   gwDom.controls.btnDaily      = document.getElementById('gw-btn-daily');
-  gwDom.controls.btnMute       = document.getElementById('gw-btn-mute');
+  gwDom.controls.btnMute       = document.getElementById('mutebtn');
   gwDom.controls.btnHowToClose = document.getElementById('gw-howto-close');
 
   // Backwards compatibility: older code may use gwDom.btnMute directly
@@ -1484,6 +1484,32 @@ window.addEventListener("keydown", unlockBGM, { once: true });
 // Placeholder FX hooks if we want micro-animations later
 function playSfxInput() { /* no-op for now */ }
 function playSfxPuzzleComplete() { /* no-op for now */ }
+
+async function handleShareClick() {
+  const url = window.location.href;
+  const shareData = {
+    title: 'GridWord',
+    text: 'Try today’s GridWord daily challenge by CAR-NOVA.i',
+    url
+  };
+
+  if (navigator.share && window.isSecureContext) {
+    try {
+      await navigator.share(shareData);
+      return;
+    } catch (err) {
+      console.warn('Web Share failed, falling back:', err);
+    }
+  }
+
+  try {
+    await navigator.clipboard.writeText(url);
+    alert('GridWord link copied to clipboard');
+  } catch (err) {
+    window.prompt('Copy this GridWord link:', url);
+  }
+}
+
 
 // <<< [NOVA-SECTION: AUDIO & FX – END]
 // #endregion
