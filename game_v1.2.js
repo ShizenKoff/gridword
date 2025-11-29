@@ -458,10 +458,6 @@ function bindCoreEventHandlers() {
     gwDom.modals.backdrop.addEventListener('click', closeHowTo);
   }
 
-  // 📤 SHARE BUTTON — YES add this part
-  if (gwDom.btnShare) {
-    gwDom.btnShare.addEventListener('click', handleShareClick);
-  }
 }
 
 
@@ -1882,3 +1878,4 @@ function hideLoader() {
     ▸ And joined CAR-NOVA.i in the void.
   ──────────────────────────────────────────────────────────────
 */
+
