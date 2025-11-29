@@ -1513,30 +1513,7 @@ window.addEventListener("keydown", unlockBGM, { once: true });
 function playSfxInput() { /* no-op for now */ }
 function playSfxPuzzleComplete() { /* no-op for now */ }
 
-async function handleShareClick() {
-  const url = window.location.href;
-  const shareData = {
-    title: 'GridWord',
-    text: 'Try today’s GridWord daily challenge by CAR-NOVA.i',
-    url
-  };
 
-  if (navigator.share && window.isSecureContext) {
-    try {
-      await navigator.share(shareData);
-      return;
-    } catch (err) {
-      console.warn('Web Share failed, falling back:', err);
-    }
-  }
-
-  try {
-    await navigator.clipboard.writeText(url);
-    alert('GridWord link copied to clipboard');
-  } catch (err) {
-    window.prompt('Copy this GridWord link:', url);
-  }
-}
 
 
 // <<< [NOVA-SECTION: AUDIO & FX – END]
@@ -1595,53 +1572,7 @@ window.startGridlocked = async function () {
 };
 
 
-function buildShareText(result = {}) {
-  const mode = result.isDaily ? 'Daily' : 'Classic';
-  const diff = result.diff || gwState.currentDifficulty || 'normal';
-  let base = `I'm playing GRIDWORD (${mode}, ${diff}) by CAR-NOVA.i 🚀`;
 
-  if (typeof result.timeMs === 'number') {
-    base += ` – time: ${fmt(result.timeMs)}.`;
-  }
-  if (result.isDaily && typeof result.streak === 'number') {
-    base += ` Daily streak: ${result.streak} day${result.streak === 1 ? '' : 's'}.`;
-  }
-  return base;
-}
-
-
-// ---------------------------- Sharing / Social --------------------------------------------
-
-
-function shareResultToPlatform(result = {}) {
-  const text = buildShareText(result);
-
-  // 1) FB Instant path (if running inside FB Instant Games)
-  try {
-    if (window.FBInstant && typeof FBInstant.shareAsync === 'function') {
-      FBInstant.shareAsync({
-        intent: 'SHARE',
-        image: null, // could be a base64 screenshot later
-        text,
-        data: {
-          mode: result.isDaily ? 'daily' : 'classic',
-          diff: result.diff || gwState.currentDifficulty || 'normal'
-        }
-      }).catch(err => {
-        console.log('FBInstant share failed:', err);
-      });
-      return;
-    }
-  } catch (e) {
-    console.log('FBInstant not available:', e);
-  }
-
-  // 2) Fallback: regular web share URL
-  const url = encodeURIComponent(GW_SHARE_URL);
-  const quote = encodeURIComponent(text);
-  const shareUrl = `https://www.facebook.com/sharer/sharer.php?u=${url}&quote=${quote}`;
-  window.open(shareUrl, '_blank', 'noopener');
-}
 
 
 // <<< [NOVA-SECTION: PLATFORM INTEGRATION – END]
