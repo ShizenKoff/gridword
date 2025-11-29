@@ -495,12 +495,17 @@ function bindCoreEventHandlers() {
     gwDom.modals.backdrop.addEventListener('click', closeHowTo);
   }
 
+   // Share button
   if (gwDom.btnShare) {
-  gwDom.btnShare.addEventListener('click', handleShareClick);
+    console.log('bindCoreEventHandlers → binding Share click');
+    gwDom.btnShare.addEventListener('click', handleShareClick);
+  } else {
+    console.warn('bindCoreEventHandlers → Share button not found');
+  }
 }
 
 
-}
+
 
 
 
