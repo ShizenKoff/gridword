@@ -433,46 +433,40 @@ window.startGridlocked = async function () {
 
 //-------------------------------------------------------Share button code-------------------------------------------------------//
 
-async function handleShareClick() {
-  const SHARE_URL  = "https://www.carson-designs.com/gridword";
-  const SHARE_TEXT = "Try today’s GRIDWORD puzzle from CAR-NOVA.i – a daily 5×5 challenge.";
+// -----------------------------------------------------------
+// Share Button (Simple Mode) – Copies page link to clipboard
+// -----------------------------------------------------------
+function handleShareClick() {
+  const SHARE_URL = 'https://www.carson-designs.com/gridword';
 
-  // Prefer Web Share when really allowed
-  if (navigator.share && window.isSecureContext) {
-    try {
-      await navigator.share({
-        title: "GRIDWORD – CAR-NOVA.i",
-        text: SHARE_TEXT,
-        url: SHARE_URL,
+  // Try native clipboard first
+  if (navigator.clipboard && window.isSecureContext) {
+    navigator.clipboard.writeText(SHARE_URL)
+      .then(() => alert('GridWord link copied to clipboard'))
+      .catch((err) => {
+        console.error('Clipboard write failed, falling back:', err);
+        fallbackCopy(SHARE_URL);
       });
-      return;
-    } catch (err) {
-      // Comment this out if you don't want noise
-      console.log("Web Share failed, falling back:", err);
-    }
+    return;
   }
 
-  // Fallback: Facebook share in new tab
-  const url   = encodeURIComponent(SHARE_URL);
-  const quote = encodeURIComponent(SHARE_TEXT);
-  const fbUrl = `https://www.facebook.com/sharer/sharer.php?u=${url}&quote=${quote}`;
-  window.open(fbUrl, "_blank", "noopener,noreferrer");
+  // Fallback for older browsers
+  fallbackCopy(SHARE_URL);
 }
 
-function handleShareClick() {
-  console.log('Share clicked');  // temp debug so you can see it fire
-
-  // Prefer the last stored result if there is one
-  const baseResult = gwState.lastResult || {
-    isSuccess: false,
-    isDaily: gwState.isDaily,
-    diff: gwState.currentDifficulty,
-    timeMs: null,
-    streak: gwState.dailyStreak
-  };
-
-  shareResultToPlatform(baseResult);
+function fallbackCopy(text) {
+  const ta = document.createElement('textarea');
+  ta.value = text;
+  ta.setAttribute('readonly', '');
+  ta.style.position = 'absolute';
+  ta.style.left = '-9999px';
+  document.body.appendChild(ta);
+  ta.select();
+  document.execCommand('copy');
+  document.body.removeChild(ta);
+  alert('GridWord link copied to clipboard');
 }
+
 
 
 
