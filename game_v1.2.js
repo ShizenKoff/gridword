@@ -431,15 +431,25 @@ window.startGridlocked = async function () {
  * All per-cell input events live inside the RENDERING section.
  */
 function bindCoreEventHandlers() {
-  if (gwDom.btnMute) {
-    gwDom.btnMute.addEventListener('click', toggleAudioMute);
-  if (gwDom.controls.btnHowToClose) {
-  gwDom.controls.btnHowToClose.addEventListener('click', closeHowTo);
-}
-  if (gwDom.modals.backdrop) {
-  gwDom.modals.backdrop.addEventListener('click', closeHowTo);
-}
+  // Mute button
+  const muteBtn = gwDom.controls?.btnMute || gwDom.btnMute;
+  if (muteBtn) {
+    muteBtn.addEventListener('click', toggleAudioMute);
+  }
 
+  // How-to close button
+  if (gwDom.controls.btnHowToClose) {
+    gwDom.controls.btnHowToClose.addEventListener('click', closeHowTo);
+  }
+
+  // Backdrop closes the modal too
+  if (gwDom.modals.backdrop) {
+    gwDom.modals.backdrop.addEventListener('click', closeHowTo);
+  }
+
+  // Share button
+  if (gwDom.btnShare) {
+    gwDom.btnShare.addEventListener('click', handleShareClick);
   }
 }
 
@@ -1444,9 +1454,11 @@ function toggleAudioMute() {
 }
 
 function updateAudioUi() {
-  if (!gwDom.btnMute) return;
-  gwDom.btnMute.textContent = gwState.audioEnabled ? '🔊' : '🔇';
+  const btn = gwDom.controls?.btnMute || gwDom.btnMute;
+  if (!btn) return;
+  btn.textContent = gwState.audioEnabled ? '🔊' : '🔇';
 }
+
 
 
 
