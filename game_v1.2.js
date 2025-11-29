@@ -313,7 +313,7 @@ function cacheDom() {
 
   gwDom.controls.btnNewGame    = document.getElementById('gw-btn-new');
   gwDom.controls.btnDaily      = document.getElementById('gw-btn-daily');
-  gwDom.controls.btnMute       = document.getElementById('mutebtn');
+  gwDom.controls.btnMute       = document.getElementById('muteBtn');
   gwDom.controls.btnHowToClose = document.getElementById('gw-howto-close');
 
   // Backwards compatibility: older code may use gwDom.btnMute directly
@@ -1958,3 +1958,4 @@ function hideLoader() {
     ▸ And joined CAR-NOVA.i in the void.
   ──────────────────────────────────────────────────────────────
 */
+
