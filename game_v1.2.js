@@ -316,15 +316,22 @@ function cacheDom() {
   gwDom.controls.btnMute       = document.getElementById('gw-btn-mute');
   gwDom.controls.btnHowToClose = document.getElementById('gw-howto-close');
 
+  // Backwards compatibility: older code may use gwDom.btnMute directly
+  gwDom.btnMute = gwDom.controls.btnMute;
+
   gwDom.modals.howto    = document.getElementById('gw-howto');
   gwDom.modals.backdrop = document.getElementById('gw-backdrop');
 
-  gwDom.loader = document.getElementById('gw-loader'); 
-  shareBtn = document.getElementById('gw-share-btn');
-  bgm = document.getElementById("bgm");
+  gwDom.loader   = document.getElementById('gw-loader');
 
-  // <-- NEW
+  // Share button: keep both a gwDom ref and a global for old code
+  gwDom.btnShare = document.getElementById('gw-share-btn');
+  shareBtn       = gwDom.btnShare;
+
+  // Background music element
+  bgm = document.getElementById('bgm');
 }
+
 
 
 // <<< [NOVA-SECTION: DOM REFERENCES – END]
