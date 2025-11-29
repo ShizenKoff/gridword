@@ -311,26 +311,32 @@ function cacheDom() {
   gwDom.hud.timer   = document.getElementById('gw-timer');
   gwDom.hud.message = document.getElementById('gw-message');
 
+  // Controls
   gwDom.controls.btnNewGame    = document.getElementById('gw-btn-new');
   gwDom.controls.btnDaily      = document.getElementById('gw-btn-daily');
-  gwDom.controls.btnMute       = document.getElementById('muteBtn');
+
+  // 🔊 Mute button – HTML must have: <button id="muteBtn">🔊</button>
+  gwDom.controls.btnMute = document.getElementById('muteBtn');
+  gwDom.btnMute          = gwDom.controls.btnMute;  // backward-compat alias
+
   gwDom.controls.btnHowToClose = document.getElementById('gw-howto-close');
 
-  // Backwards compatibility: older code may use gwDom.btnMute directly
-  gwDom.btnMute = gwDom.controls.btnMute;
-
+  // Modals
   gwDom.modals.howto    = document.getElementById('gw-howto');
   gwDom.modals.backdrop = document.getElementById('gw-backdrop');
 
-  gwDom.loader   = document.getElementById('gw-loader');
+  // Loader
+  gwDom.loader = document.getElementById('gw-loader');
 
-  // Share button: keep both a gwDom ref and a global for old code
+  // Share button – HTML: <button id="gw-share-btn" ...>Share</button>
   gwDom.btnShare = document.getElementById('gw-share-btn');
-  shareBtn       = gwDom.btnShare;
+  shareBtn       = gwDom.btnShare;  // if older code expects global
 
-  // Background music element
-  bgm = document.getElementById('bgm');
+  // Background music audio element – HTML: <audio id="bgm" ...>
+  gwDom.bgm = document.getElementById('bgm');
+  bgm       = gwDom.bgm;
 }
+
 
 
 
@@ -1958,4 +1964,3 @@ function hideLoader() {
     ▸ And joined CAR-NOVA.i in the void.
   ──────────────────────────────────────────────────────────────
 */
-
