@@ -431,41 +431,6 @@ window.startGridlocked = async function () {
   await initGridWord({ platform: isFB ? 'fb' : 'web' });
 };
 
-//-------------------------------------------------------Share button code-------------------------------------------------------//
-
-// -----------------------------------------------------------
-// Share Button (Simple Mode) – Copies page link to clipboard
-// -----------------------------------------------------------
-function handleShareClick() {
-  const SHARE_URL = 'https://www.carson-designs.com/gridword';
-
-  // Try native clipboard first
-  if (navigator.clipboard && window.isSecureContext) {
-    navigator.clipboard.writeText(SHARE_URL)
-      .then(() => alert('GridWord link copied to clipboard'))
-      .catch((err) => {
-        console.error('Clipboard write failed, falling back:', err);
-        fallbackCopy(SHARE_URL);
-      });
-    return;
-  }
-
-  // Fallback for older browsers
-  fallbackCopy(SHARE_URL);
-}
-
-function fallbackCopy(text) {
-  const ta = document.createElement('textarea');
-  ta.value = text;
-  ta.setAttribute('readonly', '');
-  ta.style.position = 'absolute';
-  ta.style.left = '-9999px';
-  document.body.appendChild(ta);
-  ta.select();
-  document.execCommand('copy');
-  document.body.removeChild(ta);
-  alert('GridWord link copied to clipboard');
-}
 
 
 
