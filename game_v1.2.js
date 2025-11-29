@@ -433,6 +433,43 @@ window.startGridlocked = async function () {
 
 
 
+// ------------------------------------------------------------Share button------------------------------------------------------------
+function handleShareClick() {
+  const url = window.location.href;
+
+  // Modern clipboard API (preferred)
+  if (navigator.clipboard && window.isSecureContext) {
+    navigator.clipboard.writeText(url)
+      .then(() => {
+        alert('GridWord link copied to clipboard');
+      })
+      .catch(err => {
+        console.error('Clipboard error:', err);
+        fallbackCopy(url);
+      });
+    return;
+  }
+
+  // Fallback for older browsers
+  fallbackCopy(url);
+}
+
+function fallbackCopy(text) {
+  const ta = document.createElement('textarea');
+  ta.value = text;
+  ta.setAttribute('readonly', '');
+  ta.style.position = 'absolute';
+  ta.style.left = '-9999px';
+  document.body.appendChild(ta);
+  ta.select();
+  document.execCommand('copy');
+  document.body.removeChild(ta);
+
+  alert('GridWord link copied to clipboard');
+}
+
+
+
 
 
 
@@ -457,6 +494,11 @@ function bindCoreEventHandlers() {
   if (gwDom.modals.backdrop) {
     gwDom.modals.backdrop.addEventListener('click', closeHowTo);
   }
+
+  if (gwDom.btnShare) {
+  gwDom.btnShare.addEventListener('click', handleShareClick);
+}
+
 
 }
 
@@ -1878,4 +1920,3 @@ function hideLoader() {
     ▸ And joined CAR-NOVA.i in the void.
   ──────────────────────────────────────────────────────────────
 */
-
