@@ -432,6 +432,34 @@ window.startGridlocked = async function () {
 };
 
 
+
+async function handleShareClick() {
+  const SHARE_URL  = "https://www.carson-designs.com/gridword";
+  const SHARE_TEXT = "Try today’s GRIDWORD puzzle from CAR-NOVA.i – a daily 5×5 challenge.";
+
+  // Prefer Web Share when really allowed
+  if (navigator.share && window.isSecureContext) {
+    try {
+      await navigator.share({
+        title: "GRIDWORD – CAR-NOVA.i",
+        text: SHARE_TEXT,
+        url: SHARE_URL,
+      });
+      return;
+    } catch (err) {
+      // Comment this out if you don't want noise
+      console.log("Web Share failed, falling back:", err);
+    }
+  }
+
+  // Fallback: Facebook share in new tab
+  const url   = encodeURIComponent(SHARE_URL);
+  const quote = encodeURIComponent(SHARE_TEXT);
+  const fbUrl = `https://www.facebook.com/sharer/sharer.php?u=${url}&quote=${quote}`;
+  window.open(fbUrl, "_blank", "noopener,noreferrer");
+}
+
+
 /**
  * Attach top-level event handlers (e.g., mute button).
  * All per-cell input events live inside the RENDERING section.
@@ -439,26 +467,27 @@ window.startGridlocked = async function () {
 function bindCoreEventHandlers() {
   // 🔊 Mute button
   const muteBtn = gwDom.controls?.btnMute || gwDom.btnMute;
-  console.log('Mute button wired as:', muteBtn); // temp debug
+  console.log('Mute button wired as:', muteBtn); // debug
   if (muteBtn) {
     muteBtn.addEventListener('click', toggleAudioMute);
   }
 
-  // ℹ️ How-to close button
+  // ℹ️ How-to close
   if (gwDom.controls.btnHowToClose) {
     gwDom.controls.btnHowToClose.addEventListener('click', closeHowTo);
   }
 
-  // 🕳 Backdrop closes how-to
+  // Backdrop closes How-to
   if (gwDom.modals.backdrop) {
     gwDom.modals.backdrop.addEventListener('click', closeHowTo);
   }
 
-  // 📤 Share button
+  // 📤 SHARE BUTTON — YES add this part
   if (gwDom.btnShare) {
     gwDom.btnShare.addEventListener('click', handleShareClick);
   }
 }
+
 
 
 /**
@@ -957,27 +986,7 @@ shareBtn.id = "gw-share-btn";
 shareBtn.textContent = "Share";
 shareBtn.className = "sec-btn";
 
-shareBtn.addEventListener("click", () => {
-  const SHARE_URL  = "https://www.carson-designs.com/gridword";
-  const SHARE_TEXT = "Try today’s GRIDWORD puzzle from CAR-NOVA.i – a daily 5×5 challenge.";
 
-  // Modern Web Share API (mobile + desktop)
-  if (navigator.share) {
-    navigator.share({
-      title: "GRIDWORD – CAR-NOVA.i",
-      text: SHARE_TEXT,
-      url: SHARE_URL,
-    }).catch((err) => {
-      console.log("navigator.share failed:", err);
-    });
-  } else {
-    // Facebook fallback
-    const url = encodeURIComponent(SHARE_URL);
-    const quote = encodeURIComponent(SHARE_TEXT);
-    const fbUrl = `https://www.facebook.com/sharer/sharer.php?u=${url}&quote=${quote}`;
-    window.open(fbUrl, "_blank", "noopener,noreferrer");
-  }
-});
 
 
 
