@@ -150,10 +150,10 @@
  */
 
  // ------------------------Share code------------------------
-  const GW_SHARE_URL = 'https://YOUR-GRIDWORD-URL-HERE'; // <-- set this to your live game URL
+  const GW_SHARE_URL = 'https://carson-designs.com/gridword'; // <-- set this to your live game URL
 
-
-const GW_VERSION = '1.2.0';
+// ------------------------------------------------------------ VERSION NUMBER ----------------------------------------------------------------
+const GW_VERSION = '1.2.2';
 
 // Core puzzle config for the current GridWord mode
 const GRID_SIZE = 5;  // 5x5 interlocking grid
@@ -431,7 +431,7 @@ window.startGridlocked = async function () {
   await initGridWord({ platform: isFB ? 'fb' : 'web' });
 };
 
-
+//-------------------------------------------------------Share button code-------------------------------------------------------//
 
 async function handleShareClick() {
   const SHARE_URL  = "https://www.carson-designs.com/gridword";
@@ -458,6 +458,23 @@ async function handleShareClick() {
   const fbUrl = `https://www.facebook.com/sharer/sharer.php?u=${url}&quote=${quote}`;
   window.open(fbUrl, "_blank", "noopener,noreferrer");
 }
+
+function handleShareClick() {
+  console.log('Share clicked');  // temp debug so you can see it fire
+
+  // Prefer the last stored result if there is one
+  const baseResult = gwState.lastResult || {
+    isSuccess: false,
+    isDaily: gwState.isDaily,
+    diff: gwState.currentDifficulty,
+    timeMs: null,
+    streak: gwState.dailyStreak
+  };
+
+  shareResultToPlatform(baseResult);
+}
+
+
 
 
 /**
