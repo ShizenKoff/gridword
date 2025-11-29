@@ -437,27 +437,29 @@ window.startGridlocked = async function () {
  * All per-cell input events live inside the RENDERING section.
  */
 function bindCoreEventHandlers() {
-  // Mute button
+  // 🔊 Mute button
   const muteBtn = gwDom.controls?.btnMute || gwDom.btnMute;
+  console.log('Mute button wired as:', muteBtn); // temp debug
   if (muteBtn) {
     muteBtn.addEventListener('click', toggleAudioMute);
   }
 
-  // How-to close button
+  // ℹ️ How-to close button
   if (gwDom.controls.btnHowToClose) {
     gwDom.controls.btnHowToClose.addEventListener('click', closeHowTo);
   }
 
-  // Backdrop closes the modal too
+  // 🕳 Backdrop closes how-to
   if (gwDom.modals.backdrop) {
     gwDom.modals.backdrop.addEventListener('click', closeHowTo);
   }
 
-  // Share button
+  // 📤 Share button
   if (gwDom.btnShare) {
     gwDom.btnShare.addEventListener('click', handleShareClick);
   }
 }
+
 
 /**
  * Initialize audio (read saved preference from localStorage, etc.).
