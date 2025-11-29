@@ -468,6 +468,14 @@ function fallbackCopy(text) {
   alert('GridWord link copied to clipboard');
 }
 
+function wireShareButton() {
+  gwDom.btnShare = document.getElementById('gw-share-btn');
+  console.log('wireShareButton → gwDom.btnShare =', gwDom.btnShare);
+
+  //if (gwDom.btnShare) {
+  //  gwDom.btnShare.addEventListener('click', handleShareClick);
+ // }
+}
 
 
 
@@ -1018,7 +1026,7 @@ toolbar.appendChild(shareBtn);
 
 app.appendChild(toolbar);
 
-
+wireShareButton();
 
 
 
