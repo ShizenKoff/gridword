@@ -1087,27 +1087,36 @@ dailyBtn.textContent = 'Daily';
 dailyBtn.className = 'sec-btn';
 
 dailyBtn.onclick = () => {
-  // Pick today's puzzle
-  const dp = pickDailyPuzzle();  // dp = { puzzle, key }
+  const today = getTodayKey();
+  let lastCompleted = null;
 
+  try {
+    lastCompleted = localStorage.getItem('gw_last_daily_completed');
+  } catch (e) {}
+
+  // 🚫 Already completed today's daily
+  if (lastCompleted === today) {
+    const statusEl = document.getElementById('status');
+    if (statusEl) {
+      statusEl.textContent = 'Daily already solved – come back tomorrow ✨';
+    }
+    return;
+  }
+
+  // ✅ Otherwise, start today’s daily
+  const dp = pickDailyPuzzle();  // dp = { puzzle, key }
   if (!dp) return;
 
-  // Mark Daily Mode active
   gwState.isDaily = true;
   gwState.currentPuzzleId = dp.key;
 
-  // Load local streak info (if not already loaded earlier)
   loadDailyProgress();
-
-  // 🔥 Analytics: count this player for today
   gwLogDailyStart(dp.key);
-
-  // DO NOT increment streak here — only on completion
   saveDailyProgress(false);
 
-  // Render the puzzle
   renderPuzzle(dp.puzzle, gwState.currentDifficulty);
 };
+
 
 // ---------------------------------------------------------
 // SHARE BUTTON  (modern + safe + globally compatible)
@@ -1493,33 +1502,29 @@ function checkSolution() {
   const statusEl = document.getElementById('status');
 
   if (gwState.isDaily) {
-    const streak = updateDailyStreak();   // your existing streak logic
+  const streak = updateDailyStreak();
 
-    // 🔹 Optional: if you wired saveDailyProgress(true)
-    if (typeof saveDailyProgress === 'function') {
-      saveDailyProgress(true);
-    }
+  // 🔹 Mark today's daily as completed on this device
+  try {
+    localStorage.setItem('gw_last_daily_completed', getTodayKey());
+  } catch (e) {}
 
-    // 🔥 Analytics: log daily completion
-    if (typeof gwLogDailyComplete === 'function') {
-      gwLogDailyComplete(elapsed);
-    }
-
-    if (statusEl) {
-      statusEl.textContent =
-        `Daily solved! 🔥 Streak: ${streak} day${streak === 1 ? '' : 's'}.`;
-    }
-
-    const chip = document.getElementById('daily-chip');
-    if (chip) {
-      chip.innerHTML = `<span class="icon">🔥</span><span>Streak: ${streak}</span>`;
-      chip.classList.remove('hot');
-      void chip.offsetWidth;           // restart CSS animation
-      chip.classList.add('hot');
-    }
-  } else {
-    if (statusEl) statusEl.textContent = 'Solved! 🎉';
+  if (statusEl) {
+    statusEl.textContent =
+      `Daily solved! 🔥 Streak: ${streak} day${streak === 1 ? '' : 's'}.`;
   }
+
+  const chip = document.getElementById('daily-chip');
+  if (chip) {
+    chip.innerHTML = `<span class="icon">🔥</span><span>Streak: ${streak}</span>`;
+    chip.classList.remove('hot');
+    void chip.offsetWidth;
+    chip.classList.add('hot');
+  }
+} else {
+  if (statusEl) statusEl.textContent = 'Solved! 🎉';
+}
+
 }
 
 return ok;
