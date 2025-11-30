@@ -486,14 +486,14 @@ function wireShareButton() {
  * All per-cell input events live inside the RENDERING section.
  */
 function bindCoreEventHandlers() {
-  // 🔊 Mute button
-  const muteBtn = gwDom.controls?.btnMute || gwDom.btnMute;
-  console.log('Mute button wired as:', muteBtn); // debug
+  // 🔊 Mute button (you already have this working)
+  const muteBtn = gwDom.controls?.btnMute || gwDom.btnMute || document.getElementById('muteBtn');
+  console.log('Mute button wired as:', muteBtn);
   if (muteBtn) {
     muteBtn.addEventListener('click', toggleAudioMute);
   }
 
-  // ℹ️ How-to close
+  // ℹ️ How-to close button
   if (gwDom.controls.btnHowToClose) {
     gwDom.controls.btnHowToClose.addEventListener('click', closeHowTo);
   }
@@ -503,12 +503,17 @@ function bindCoreEventHandlers() {
     gwDom.modals.backdrop.addEventListener('click', closeHowTo);
   }
 
-   // Share button
-  if (gwDom.btnShare) {
-    console.log('bindCoreEventHandlers → binding Share click');
-    gwDom.btnShare.addEventListener('click', handleShareClick);
-  } else {
-    console.warn('bindCoreEventHandlers → Share button not found');
+  // 📤 Delegated Share handler – catches the footer "Share" button
+  if (gwDom.root) {
+    gwDom.root.addEventListener('click', (e) => {
+      const btn = e.target.closest('button');
+      if (!btn) return;
+
+      const label = (btn.textContent || '').trim().toLowerCase();
+      if (label === 'share') {
+        handleShareClick();
+      }
+    });
   }
 }
 
