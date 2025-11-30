@@ -153,7 +153,7 @@
   const GW_SHARE_URL = 'https://carson-designs.com/gridword'; // <-- set this to your live game URL
 
 // ------------------------------------------------------------ VERSION NUMBER ----------------------------------------------------------------
-const GW_VERSION = '1.2.2';
+const GW_VERSION = '1.2.4';
 
 // Core puzzle config for the current GridWord mode
 const GRID_SIZE = 5;  // 5x5 interlocking grid
@@ -262,6 +262,84 @@ const gwState = {
 // <<< [NOVA-SECTION: GLOBAL STATE – END]
 // #endregion
 // ============================================================
+
+// ============================================================
+// ANALYTICS HELPERS (GA4)
+// ============================================================
+
+function gwHasGtag() {
+  return typeof gtag === 'function';
+}
+
+// Anonymous-ish player id per browser
+function gwGetPlayerId() {
+  const KEY = 'gw_player_id';
+  let id = localStorage.getItem(KEY);
+  if (!id) {
+    id = (crypto.randomUUID && crypto.randomUUID()) ||
+         ('gw-' + Math.random().toString(36).slice(2));
+    localStorage.setItem(KEY, id);
+  }
+  return id;
+}
+
+// Thin wrapper so we can safely fire events
+function gwLogEvent(name, params = {}) {
+  if (!gwHasGtag()) return;
+  try {
+    gtag('event', name, {
+      player_id: gwGetPlayerId(),
+      platform: gwState?.platform || 'web',
+      ...params
+    });
+  } catch (e) {
+    // Silent fail – analytics should never break the game
+    console.warn('gwLogEvent failed', name, e);
+  }
+}
+
+// Mark a "once per day" key in localStorage for idempotent events
+function gwMarkDailyOnce(keyBase) {
+  const today = new Date().toISOString().slice(0, 10); // YYYY-MM-DD
+  const KEY = `gw_daily_${keyBase}`;
+  const last = localStorage.getItem(KEY);
+  if (last === today) return false; // already logged today
+  localStorage.setItem(KEY, today);
+  return true;
+}
+
+// ============================================================
+// HIGH-LEVEL ANALYTICS CALLS
+// ============================================================
+
+function gwLogDailyStart(puzzleId) {
+  // Only log once per player per day
+  if (!gwMarkDailyOnce('start')) return;
+  gwLogEvent('daily_start', {
+    puzzle_id: puzzleId || gwState.currentPuzzleId || 'unknown',
+    streak: gwState.dailyStreak || 0,
+  });
+}
+
+function gwLogDailyComplete(timeMs) {
+  // We allow multiple completes if they retry, but you could guard this too
+  gwLogEvent('daily_complete', {
+    puzzle_id: gwState.currentPuzzleId || 'unknown',
+    streak: gwState.dailyStreak || 0,
+    time_ms: timeMs || null,
+  });
+}
+
+function gwLogShareClick() {
+  gwLogEvent('share_click', {
+    mode: gwState.isDaily ? 'daily' : 'classic',
+    puzzle_id: gwState.currentPuzzleId || 'unknown',
+  });
+}
+
+
+
+
 
 
 
@@ -381,6 +459,7 @@ window.addEventListener("keydown", unlockBGM, { once: true });
 async function initGridWord(options = { platform: 'web' }) {
   cacheDom();
   initAudioState();
+  loadDailyProgress();  
   bindCoreEventHandlers();
 
   // Audio unlock for browser autoplay policies
@@ -1006,9 +1085,28 @@ const dailyBtn = document.createElement('button');
 dailyBtn.id = 'gw-daily-btn';
 dailyBtn.textContent = 'Daily';
 dailyBtn.className = 'sec-btn';
+
 dailyBtn.onclick = () => {
-  const dp = pickDailyPuzzle();
-  renderPuzzle(dp, gwState.currentDifficulty);
+  // Pick today's puzzle
+  const dp = pickDailyPuzzle();  // dp = { puzzle, key }
+
+  if (!dp) return;
+
+  // Mark Daily Mode active
+  gwState.isDaily = true;
+  gwState.currentPuzzleId = dp.key;
+
+  // Load local streak info (if not already loaded earlier)
+  loadDailyProgress();
+
+  // 🔥 Analytics: count this player for today
+  gwLogDailyStart(dp.key);
+
+  // DO NOT increment streak here — only on completion
+  saveDailyProgress(false);
+
+  // Render the puzzle
+  renderPuzzle(dp.puzzle, gwState.currentDifficulty);
 };
 
 // ---------------------------------------------------------
@@ -1376,45 +1474,56 @@ function checkSolution() {
   }
 
   if (ok) {
-    stopTimer();
-    const elapsed = performance.now() - gwState.startTime;
-    saveBest(elapsed, diff);
+  stopTimer();
+  const elapsed = performance.now() - gwState.startTime;
+  saveBest(elapsed, diff);
 
-    gwState.lastResult = {
-  isSuccess: true,
-  isDaily: gwState.isDaily,
-  diff,
-  timeMs: elapsed,
-  streak: gwState.dailyStreak
-};
+  gwState.lastResult = {
+    isSuccess: true,
+    isDaily: gwState.isDaily,
+    diff,
+    timeMs: elapsed,
+    streak: gwState.dailyStreak
+  };
 
-    const bv = getBest(diff);
-    const bEl = document.getElementById('best-val');
-    if (bEl) bEl.textContent = bv ? fmt(bv) : '--:--';
+  const bv = getBest(diff);
+  const bEl = document.getElementById('best-val');
+  if (bEl) bEl.textContent = bv ? fmt(bv) : '--:--';
 
-    // Always grab the status element directly
-    const statusEl = document.getElementById('status');
+  const statusEl = document.getElementById('status');
 
-    if (gwState.isDaily) {
-      const streak = updateDailyStreak();
-      if (statusEl) {
-        statusEl.textContent =
-          `Daily solved! 🔥 Streak: ${streak} day${streak === 1 ? '' : 's'}.`;
-      }
+  if (gwState.isDaily) {
+    const streak = updateDailyStreak();   // your existing streak logic
 
-      const chip = document.getElementById('daily-chip');
-      if (chip) {
-        chip.innerHTML = `<span class="icon">🔥</span><span>Streak: ${streak}</span>`;
-        chip.classList.remove('hot');
-        void chip.offsetWidth;           // restart CSS animation
-        chip.classList.add('hot');
-      }
-    } else {
-      if (statusEl) statusEl.textContent = 'Solved! 🎉';
+    // 🔹 Optional: if you wired saveDailyProgress(true)
+    if (typeof saveDailyProgress === 'function') {
+      saveDailyProgress(true);
     }
-  }
 
-  return ok;
+    // 🔥 Analytics: log daily completion
+    if (typeof gwLogDailyComplete === 'function') {
+      gwLogDailyComplete(elapsed);
+    }
+
+    if (statusEl) {
+      statusEl.textContent =
+        `Daily solved! 🔥 Streak: ${streak} day${streak === 1 ? '' : 's'}.`;
+    }
+
+    const chip = document.getElementById('daily-chip');
+    if (chip) {
+      chip.innerHTML = `<span class="icon">🔥</span><span>Streak: ${streak}</span>`;
+      chip.classList.remove('hot');
+      void chip.offsetWidth;           // restart CSS animation
+      chip.classList.add('hot');
+    }
+  } else {
+    if (statusEl) statusEl.textContent = 'Solved! 🎉';
+  }
+}
+
+return ok;
+
 }
 
 
@@ -1547,34 +1656,107 @@ function playSfxPuzzleComplete() { /* no-op for now */ }
 
 
 // ============================================================
-// #region DAILY MODE (Optional v1.2 Feature)
+// #region DAILY MODE (v1.2 – ACTIVATED)
 // >>> [NOVA-SECTION: DAILY MODE – START]
 // ============================================================
 
 /**
- * DAILY MODE is not wired to the interlocking puzzle mode yet.
- * These are stubs for future expansion (e.g., fixed daily seed).
+ * DAILY MODE
+ *
+ * - One puzzle per calendar day per device
+ * - Tracks a simple local streak
+ * - Uses a date-based seed for picking the daily
  */
+
+const GW_DAILY_LS_KEY = 'gw_daily_progress_v1';
 
 function getTodaySeed() {
   const now = new Date();
   const y = now.getFullYear();
   const m = now.getMonth() + 1;
   const d = now.getDate();
-  return `${y}-${m}-${d}`;
+  return `${y}-${m}-${d}`;  // e.g. "2025-11-29"
 }
 
 function loadDailyProgress() {
-  // TODO: read streak, lastPlayed date from localStorage
+  try {
+    const raw = localStorage.getItem(GW_DAILY_LS_KEY);
+    if (!raw) {
+      gwState.dailyStreak = 0;
+      gwState.lastDailyDate = null;
+      return;
+    }
+
+    const data = JSON.parse(raw);
+    gwState.dailyStreak = data.streak || 0;
+    gwState.lastDailyDate = data.lastDate || null;
+  } catch (e) {
+    console.warn('loadDailyProgress failed, resetting daily state', e);
+    gwState.dailyStreak = 0;
+    gwState.lastDailyDate = null;
+  }
 }
 
-function saveDailyProgress(_completed) {
-  // TODO: update streak and lastPlayed date
+function saveDailyProgress(completedToday) {
+  const today = getTodaySeed();
+  let streak = gwState.dailyStreak || 0;
+  const lastDate = gwState.lastDailyDate;
+
+  if (!completedToday) {
+    // Just persist current known streak & last date
+    const payload = JSON.stringify({ streak, lastDate });
+    try {
+      localStorage.setItem(GW_DAILY_LS_KEY, payload);
+    } catch (e) {}
+    return;
+  }
+
+  // If last completion was yesterday → streak++
+  if (lastDate) {
+    const wasYesterday = isYesterday(lastDate, today);
+    const wasToday     = (lastDate === today);
+
+    if (wasToday) {
+      // Already counted today – don't double-increment
+    } else if (wasYesterday) {
+      streak += 1;
+    } else {
+      // Missed at least one day – reset streak
+      streak = 1;
+    }
+  } else {
+    // First ever completion
+    streak = 1;
+  }
+
+  gwState.dailyStreak = streak;
+  gwState.lastDailyDate = today;
+
+  const payload = JSON.stringify({ streak, lastDate: today });
+  try {
+    localStorage.setItem(GW_DAILY_LS_KEY, payload);
+  } catch (e) {}
+}
+
+// Tiny helper: compare two "YYYY-M-D" strings
+function isYesterday(lastDateStr, todayStr) {
+  const [ty, tm, td] = todayStr.split('-').map(Number);
+  const [ly, lm, ld] = lastDateStr.split('-').map(Number);
+
+  const today = new Date(ty, tm - 1, td);
+  const last  = new Date(ly, lm - 1, ld);
+
+  const diffMs  = today - last;
+  const oneDay  = 24 * 60 * 60 * 1000;
+  const diffDays = Math.round(diffMs / oneDay);
+
+  return diffDays === 1;
 }
 
 // <<< [NOVA-SECTION: DAILY MODE – END]
 // #endregion
 // ============================================================
+
 
 
 
