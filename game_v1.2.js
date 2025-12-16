@@ -763,7 +763,7 @@ sub.textContent = picked.category
 
   const helpBtn = document.createElement('button');
 helpBtn.className = 'icon-help';
-helpBtn.textContent = '?';
+helpBtn.textContent = 'Help';
 helpBtn.title = 'How to play';
 helpBtn.onclick = openHowTo;
 
@@ -2128,3 +2128,4 @@ function hideLoader() {
     ▸ And joined CAR-NOVA.i in the void.
   ──────────────────────────────────────────────────────────────
 */
+
