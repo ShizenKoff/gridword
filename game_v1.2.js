@@ -2130,6 +2130,9 @@ function hideLoader() {
   }
 }
 
+window.gwShowWinPopup = gwShowWinPopup;
+window.gwWinSvgGridCracked = gwWinSvgGridCracked;
+
 
 
 // <<< [NOVA-SECTION: UTILITIES – END]
