@@ -259,6 +259,9 @@ const gwState = {
   lastResult: null,        // 'solved' | 'failed' | null
 };
 
+
+gwState.isSolved = false;
+
 // <<< [NOVA-SECTION: GLOBAL STATE – END]
 // #endregion
 // ============================================================
@@ -683,6 +686,9 @@ function renderPuzzle(puzzle, diff = gwState.currentDifficulty) {
 
   app.innerHTML = '';
 
+  gwState.isSolved = false;
+
+
   // ---------- PICK & PLACE LOOP (uses GAME LOGIC helpers) ----------
   let result = null;        // { grid, used, clueMap }
   let picked = puzzle;
@@ -931,6 +937,12 @@ helpBtn.onclick = openHowTo;
     }
 
     updateProgress(progBar);
+
+    if (!gwState.isSolved && gwIsSolvedNow()) {
+      gwState.isSolved = true;
+      checkSolution(); // marks cells correct, saves best, daily logic, etc.
+    }
+
 
     if (inp.value) {
       const dir = gwState.advanceDir || { dr: 0, dc: 1 };
@@ -1452,6 +1464,15 @@ function updateProgress(barEl) {
   if (barEl) barEl.style.width = pct + '%';
 }
 
+function gwIsSolvedNow() {
+  const total = countLetterCells();
+  const correct = countCorrectCells();
+  return total > 0 && correct === total;
+}
+
+
+
+
 /**
  * Check solution and update best times.
  */
@@ -1486,6 +1507,11 @@ function checkSolution() {
   stopTimer();
   const elapsed = performance.now() - gwState.startTime;
   saveBest(elapsed, diff);
+  gwState.isSolved = true;
+
+
+  gwShowWinPopup(gwWinSvgGridCracked(), { durationMs: 1500 });
+
 
   gwState.lastResult = {
     isSuccess: true,
@@ -1829,6 +1855,100 @@ function stopTimer() {
     gwState.timerId = null;
   }
 }
+
+
+// ============================================================
+// WIN POPUP (Glass SVG overlay)
+// ============================================================
+
+function gwShowWinPopup(svgMarkup, { durationMs = 1400 } = {}) {
+  const root = gwDom.root || document.getElementById('app') || document.body;
+  if (!root) return;
+
+  // Remove any existing popup first
+  const existing = document.getElementById('gw-win-pop');
+  if (existing) existing.remove();
+
+  const wrap = document.createElement('div');
+  wrap.id = 'gw-win-pop';
+  wrap.className = 'gw-win-pop';
+
+  // Drop in the SVG
+  wrap.innerHTML = svgMarkup;
+
+  root.appendChild(wrap);
+
+  // Force animation restart
+  void wrap.offsetWidth;
+  wrap.classList.add('show');
+
+  // Auto-remove
+  setTimeout(() => {
+    wrap.classList.remove('show');
+    setTimeout(() => wrap.remove(), 220);
+  }, durationMs);
+}
+
+// Your cracked glass SVG as a string
+function gwWinSvgGridCracked() {
+  return `
+<svg width="700" height="220" viewBox="0 0 700 220" xmlns="http://www.w3.org/2000/svg" aria-label="Grid Cracked">
+  <defs>
+    <filter id="neonGlow"><feGaussianBlur stdDeviation="7" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
+    <filter id="frost"><feGaussianBlur stdDeviation="2.8" result="blur"/><feComposite in="SourceGraphic" in2="blur" operator="over"/></filter>
+    <linearGradient id="glassGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="rgba(255,255,255,0.85)"/>
+      <stop offset="45%" stop-color="rgba(180,240,255,0.55)"/>
+      <stop offset="100%" stop-color="rgba(120,200,255,0.22)"/>
+    </linearGradient>
+    <linearGradient id="edgeGradient" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="#9ffcff"/>
+      <stop offset="100%" stop-color="#7dffb3"/>
+    </linearGradient>
+    <clipPath id="textClip">
+      <text x="350" y="140" text-anchor="middle" font-size="84" font-weight="900" letter-spacing="6"
+        font-family="system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif">GRID CRACKED</text>
+    </clipPath>
+  </defs>
+
+  <text x="350" y="140" text-anchor="middle" font-size="84" font-weight="900" letter-spacing="6"
+    font-family="system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif"
+    fill="none" stroke="url(#edgeGradient)" stroke-width="7" filter="url(#neonGlow)" opacity="0.95">GRID CRACKED</text>
+
+  <text x="350" y="140" text-anchor="middle" font-size="84" font-weight="900" letter-spacing="6"
+    font-family="system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif"
+    fill="url(#glassGradient)" opacity="0.78" filter="url(#frost)">GRID CRACKED</text>
+
+  <text x="350" y="136" text-anchor="middle" font-size="84" font-weight="900" letter-spacing="6"
+    font-family="system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif"
+    fill="rgba(255,255,255,0.32)" opacity="0.9">GRID CRACKED</text>
+
+  <g clip-path="url(#textClip)">
+    <g opacity="0.45">
+      <path d="M60 120 L140 112 L210 130 L280 105 L350 122 L420 100 L520 115 L640 92" fill="none" stroke="rgba(255,255,255,0.55)" stroke-width="2.2"/>
+      <path d="M120 165 L185 140 L250 168 L330 138 L405 160 L470 132 L560 150" fill="none" stroke="rgba(180,240,255,0.45)" stroke-width="2"/>
+      <path d="M170 80 L205 118 L240 92 L275 128 L315 95 L360 130 L400 88 L445 126 L485 92" fill="none" stroke="rgba(255,255,255,0.45)" stroke-width="1.8"/>
+    </g>
+    <g opacity="0.7" filter="url(#neonGlow)">
+      <path d="M95 110 L160 98 L205 120 L250 88 L310 120 L360 78 L420 118 L470 84 L540 112" fill="none" stroke="rgba(160,255,235,0.75)" stroke-width="2.6"/>
+      <path d="M260 175 L300 138 L330 155 L360 132 L395 150 L425 126 L460 148" fill="none" stroke="rgba(160,255,235,0.65)" stroke-width="2.4"/>
+    </g>
+    <g opacity="0.45">
+      <path d="M210 130 L195 150" fill="none" stroke="rgba(255,255,255,0.55)" stroke-width="1.5"/>
+      <path d="M280 105 L265 85"  fill="none" stroke="rgba(255,255,255,0.55)" stroke-width="1.4"/>
+      <path d="M350 122 L338 145" fill="none" stroke="rgba(255,255,255,0.55)" stroke-width="1.5"/>
+      <path d="M420 100 L405 78"  fill="none" stroke="rgba(255,255,255,0.55)" stroke-width="1.4"/>
+      <path d="M470 84 L490 70"   fill="none" stroke="rgba(255,255,255,0.55)" stroke-width="1.3"/>
+      <path d="M560 150 L580 165" fill="none" stroke="rgba(180,240,255,0.5)" stroke-width="1.3"/>
+    </g>
+  </g>
+</svg>
+  `.trim();
+}
+
+
+
+
 
 /**
  * Floating message for micro-reward feedback.
